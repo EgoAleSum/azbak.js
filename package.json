@@ -1,0 +1,16 @@
+{
+  "name": "azbak.js",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alessandro Segala",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.16.0",
+    "request": "^2.75.0",
+    "through2": "^2.0.0"
+  }
+}
