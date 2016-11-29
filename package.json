@@ -1,6 +1,6 @@
 {
   "name": "azbak.js",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,6 +8,10 @@
   },
   "author": "Alessandro Segala",
   "license": "MIT",
+  "preferGlobal": true,
+  "bin": {
+    "azbak": "index.js"
+  },
   "dependencies": {
     "lodash": "^4.16.0",
     "qs": "^6.3.0",
