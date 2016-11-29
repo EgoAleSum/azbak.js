@@ -12,6 +12,10 @@
   "bin": {
     "azbak": "index.js"
   },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/EgoAleSum/azbak.js.git"
+  },
   "dependencies": {
     "lodash": "^4.16.0",
     "qs": "^6.3.0",
