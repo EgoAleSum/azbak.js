@@ -22,7 +22,7 @@ $ npm install --global azbak
 
 ## Usage
 
-`````
+````
 Usage: azbak <input> <destinationPath>
 
 Send a file or a stream to Azure Blob Storage for backup.
