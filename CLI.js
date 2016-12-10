@@ -23,7 +23,7 @@ class CLI {
         program
             .version(pkgInfo.version)
             .usage('[options] <input> <destinationPath>')
-            //.option('-c, --chunks <n>', 'Number of chunks per blob [50000]', validateInt, 50000)
+            .option('-b, --blocks <n>', 'Number of blocks per blob, each of 4MB [' + StreamUpload.maxBlocksPerBlob + ']', validateInt, StreamUpload.maxBlocksPerBlob)
             //.option('--no-md5', 'Skip MD5 check when uploading chunks')
             .action(this.uploadStream)
         
@@ -89,8 +89,15 @@ class CLI {
             process.exit(3)
         }
 
-        // Start the upload
+        // Create the StreamUpload object
         let upload = new StreamUpload(sourceStream, destinationPath)
+        
+        // Pass options
+        if(program.blocks) {
+            upload.blocksPerBlob = program.blocks
+        }
+
+        // Start the upload
         upload.upload()
             .then((urls) => {
                 console.log(urls.join('\n'))
