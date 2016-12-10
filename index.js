@@ -6,4 +6,5 @@
 require('./lib/DebugLog')
 
 // Start the application
-require('./lib/AzBak')()
+const CLI = require('./CLI')
+new CLI()
