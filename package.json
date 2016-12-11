@@ -20,7 +20,7 @@
     "commander": "^2.9.0",
     "lodash": "^4.16.0",
     "qs": "^6.3.0",
-    "request": "^2.75.0",
+    "requestretry": "^1.12.0",
     "stream-chunkify": "^1.0.0",
     "through2": "^2.0.0",
     "through2-concurrent": "^1.1.0"
