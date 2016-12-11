@@ -24,7 +24,7 @@ class CLI {
             .version(pkgInfo.version)
             .usage('[options] <input> <destinationPath>')
             .option('-b, --blocks <n>', 'Number of blocks per blob, each of 4MB [' + StreamUpload.maxBlocksPerBlob + ']', validateInt, StreamUpload.maxBlocksPerBlob)
-            //.option('--no-md5', 'Skip MD5 check when uploading chunks')
+            .option('--no-md5', 'Skip MD5 check when uploading chunks')
             .action(this.uploadStream)
         
         // Help messages
@@ -96,6 +96,7 @@ class CLI {
         if(program.blocks) {
             upload.blocksPerBlob = program.blocks
         }
+        upload.md5 = !!program.md5
 
         // Start the upload
         upload.upload()
