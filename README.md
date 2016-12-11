@@ -36,6 +36,7 @@ $ npm install --global azbak
     -h, --help        output usage information
     -V, --version     output the version number
     -b, --blocks <n>  Number of blocks per blob, each of 4MB [50000]
+    --endpoint <host>  Endpoint to use [blob.core.windows.net]
     --no-md5          Skip MD5 check when uploading chunks
 
   Arguments:
