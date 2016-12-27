@@ -90,6 +90,18 @@ $ cat largefile.dat | gzip | azbak - /bak/largefile.dat.gz
 
 # Library
 
+## Installation
+
+azbak requires Node.js version 4.0 or higher and NPM.
+
+You can install the package from NPM:
+
+````sh
+$ npm install --save azbak
+````
+
+## Usage
+
 You can use azbak as a library for other Node.js applications.
 
 Example code:

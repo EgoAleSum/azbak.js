@@ -90,7 +90,9 @@ $ azbak archive.tar /bak/path/data01.tar</code></pre><p>Stream from stdin:</p>
 $ azbak - /container/file-from-stdin.tar
 
 # Example: gzip file and upload
-$ cat largefile.dat | gzip | azbak - /bak/largefile.dat.gz</code></pre><h1>Library</h1><p>You can use azbak as a library for other Node.js applications.</p>
+$ cat largefile.dat | gzip | azbak - /bak/largefile.dat.gz</code></pre><h1>Library</h1><h2>Installation</h2><p>azbak requires Node.js version 4.0 or higher and NPM.</p>
+<p>You can install the package from NPM:</p>
+<pre class="prettyprint source lang-sh"><code>$ npm install --save azbak</code></pre><h2>Usage</h2><p>You can use azbak as a library for other Node.js applications.</p>
 <p>Example code:</p>
 <pre class="prettyprint source lang-js"><code>const StreamUpload = require('azbak')
 
