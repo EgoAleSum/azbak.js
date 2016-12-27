@@ -9,7 +9,7 @@ Features:
 
 - Fully stream-based
 - The CLI supports piping input from a stream or reading from a file on disk
-- Automatically chunks files/streams bigger than the maximum blob size (~195 GB) into multiple blobs
+- Automatically chunks files/streams bigger than the maximum blob size (~4.8 TB) into multiple blobs
 - Cross-platform
 - Small memory footprint
 
@@ -28,32 +28,63 @@ $ npm install --global azbak
 
 ## Usage
 
+Command reference:
+
 ````
-  Usage: azbak [options] <input> <destinationPath>
+$ azbak [options] <input> <destinationPath>
+````
 
-  Options:
+### Authentication
 
-    -h, --help        output usage information
-    -V, --version     output the version number
-    -b, --blocks <n>  Number of blocks per blob, each of 4MB [50000]
-    --endpoint <host>  Endpoint to use [blob.core.windows.net]
-    --no-md5          Skip MD5 check when uploading chunks
+You need to authenticate against Azure Blob Storage using a storage account name and an access key. azbak supports passing these values in the same way as the official Azure CLI, using environmental variables **`AZURE_STORAGE_ACCOUNT`** and **`AZURE_STORAGE_ACCESS_KEY`**.
 
-  Arguments:
+### Arguments
 
-    <input> is the path of a local file to upload; use - for reading from
-    <destinationPath> is the path inside the Azure Blob Storage account used as destination; must include a container name (e.g. /container/path/to/file)
+**`input`** is either:
+- The path of a local file to upload (e.g. `/path/to/file.jpg`)
+- A dash (**`-`**) to read from stdin
 
-  Authentication:
+**`destinationPath`** is the path inside the Azure Blob Storage account used as destination. It has to start with a slash and include a container name (e.g. `/container/path/to/file.jpg`). The destination name always has a sequence number automatically appended (e.g. `.000`, `.001`, etc).
 
-    Use the following environmental variables to pass the storage account name and key:
-      AZURE_STORAGE_ACCOUNT="storageaccountname"
-      AZURE_STORAGE_ACCESS_KEY="abc123"
+### Options
 
-  Examples:
+The following command line options are available:
 
-    $ azbak archive.tar /bak/data01.tar
-    $ azbak - /container/file-from-stdin.tar
+- **`-b`** or **`--blocks`**: Number of blocks in each blob sent to Azure Blob Storage, each of a fixed size. The maximum (and default) value is 50,000. Setting this to a lower value can lead to more, separate blobs to be created. Because each blob has a performance target of 60MB/s, having your data split into multiple blobs allows for parallel downloads and so potentially faster restores. This has no impact on upload speed, however, as uploads are always sequential.
+- **`-s`** or **`--block-size`**: Size of each block sent to Azure Blob Storage. The maximum size is 100MB, but the default value is 20MB to reduce memory footprint. Bigger block sizes allow for larger blobs: assuming 50,000 blocks per blob (the default and maximum value), with 100MB-blocks each blob can be up to ~4.8TB, while with 20MB-blocks blobs are limited to ~1TB.
+- **`--endpoint`**: Endpoint to use. The default value is `blob.core.windows.net`, which is used by the global Azure infrastructure. Other common values are `blob.core.cloudapi.net` for Azure Germany and `blob.core.chinacloudapi.cn` for Azure China. Users of Azure Stack can enter their custom endpoint.
+- **`--no-md5`**: Skip calculating MD5 checksums locally before uploading blocks. This can speed up operation on slower systems, but offers no protection against data corruption while in transit.
+- **`-h`** or **`--help`**: Prints help message
+- **`-V`** or **`--version`**: Prints application version
+
+### Examples
+
+Set credentials:
+
+````sh
+# First method: use export statements (bash syntax)
+$ export AZURE_STORAGE_ACCOUNT="storageaccountname"
+$ export AZURE_STORAGE_ACCESS_KEY="abc123"
+$ azbak archive.tar /bak/data01.tar
+
+# Second method: pass arguments inline
+$ AZURE_STORAGE_ACCOUNT="storageaccountname" AZURE_STORAGE_ACCESS_KEY="abc123" azbak archive.tar /bak/data01.tar
+````
+
+Upload file from local disk:
+
+````sh
+# Upload file archive.tar to Azure Blob Storage, named "path/data01.tar" inside the Storage Account "bak"
+$ azbak archive.tar /bak/path/data01.tar
+````
+
+Stream from stdin:
+````sh
+# Syntax
+$ azbak - /container/file-from-stdin.tar
+
+# Example: gzip file and upload
+$ cat largefile.dat | gzip | azbak - /bak/largefile.dat.gz
 ````
 
 # Library
