@@ -79,6 +79,7 @@ $ azbak archive.tar /bak/path/data01.tar
 ````
 
 Stream from stdin:
+
 ````sh
 # Syntax
 $ azbak - /container/file-from-stdin.tar
@@ -89,4 +90,30 @@ $ cat largefile.dat | gzip | azbak - /bak/largefile.dat.gz
 
 # Library
 
-> TODO
+You can use azbak as a library for other Node.js applications.
+
+Example code:
+
+````js
+const StreamUpload = require('azbak')
+
+// Create the StreamUpload object
+let upload = new StreamUpload(sourceStream, destinationPath, storageAccountName, storageAccountKey)
+
+// Pass options
+upload.blockSize = 10 * 1024 * 1024
+
+// Start upload
+let uploadPromise = upload.upload()
+
+// uploadPromise is a then-able
+uploadPromise.then((urls) => {
+    // List of blobs uploaded
+    console.log(urls)
+}, (err) => {
+    // In case of errors
+    console.log('Upload failed: ', err)
+})
+````
+
+Full API documentation is available in the [/docs](docs) folder.
