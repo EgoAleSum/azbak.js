@@ -1,4 +1,4 @@
-> **NOTE** This branch contains the work-in-progress code for azbak 2.0.
+> **NOTE** This branch contains the work-in-progress code for azbak 2.0 beta.
 > Looking for the stable [1.0.0 release](https://github.com/EgoAleSum/azbak.js/tree/v1.0.0)?
 
 # azbak
