@@ -61,6 +61,7 @@ Looking for the stable <a href="https://github.com/EgoAleSum/azbak.js/tree/v1.0.
 <pre class="prettyprint source lang-sh"><code># Depending on your system, you may need to run this as root or add &quot;sudo&quot;
 $ npm install --global azbak</code></pre><h2>Usage</h2><p>Command reference:</p>
 <pre class="prettyprint source"><code>$ azbak [options] &lt;input> &lt;destinationPath></code></pre><h3>Authentication</h3><p>You need to authenticate against Azure Blob Storage using a storage account name and an access key. azbak supports passing these values in the same way as the official Azure CLI, using environmental variables <strong><code>AZURE_STORAGE_ACCOUNT</code></strong> and <strong><code>AZURE_STORAGE_ACCESS_KEY</code></strong>.</p>
+<p>Alternatively, you can authenticate using <a href="https://docs.microsoft.com/en-us/azure/storage/storage-dotnet-shared-access-signature-part-1">Shared Access Signature (SAS) tokens</a>, which are limited in time and scope, and are a safer alternative for scripts, cron jobs, etc. To use SAS tokens, pass authentication data with the environmental variables <strong><code>AZURE_STORAGE_ACCOUNT</code></strong> and <strong><code>AZURE_STORAGE_SAS_TOKEN</code></strong>.</p>
 <h3>Arguments</h3><p><strong><code>input</code></strong> is either:</p>
 <ul>
 <li>The path of a local file to upload (e.g. <code>/path/to/file.jpg</code>)</li>
@@ -85,7 +86,12 @@ $ export AZURE_STORAGE_ACCESS_KEY=&quot;abc123&quot;
 $ azbak archive.tar /bak/data01.tar
 
 # Second method: pass arguments inline
-$ AZURE_STORAGE_ACCOUNT=&quot;storageaccountname&quot; AZURE_STORAGE_ACCESS_KEY=&quot;abc123&quot; azbak archive.tar /bak/data01.tar</code></pre><p>Upload file from local disk:</p>
+$ AZURE_STORAGE_ACCOUNT=&quot;storageaccountname&quot; AZURE_STORAGE_ACCESS_KEY=&quot;abc123&quot; azbak archive.tar /bak/data01.tar
+
+# Use SAS Tokens
+$ export AZURE_STORAGE_ACCOUNT=&quot;storageaccountname&quot;
+$ export AZURE_STORAGE_SAS_TOKEN=&quot;?sv=...&sig=...&quot;
+$ azbak archive.tar /bak/data01.tar</code></pre><p>Upload file from local disk:</p>
 <pre class="prettyprint source lang-sh"><code># Upload file archive.tar to Azure Blob Storage, named &quot;path/data01.tar&quot; inside the Storage Account &quot;bak&quot;
 $ azbak archive.tar /bak/path/data01.tar</code></pre><p>Stream from stdin:</p>
 <pre class="prettyprint source lang-sh"><code># Syntax
@@ -98,8 +104,16 @@ $ cat largefile.dat | gzip | azbak - /bak/largefile.dat.gz</code></pre><h1>Libra
 <p>Example code:</p>
 <pre class="prettyprint source lang-js"><code>const StreamUpload = require('azbak')
 
+// Authentication data
+let authData = {
+    storageAccountName: storageAccountName,
+    storageAccountKey: storageAccountKey,
+    // If using SAS token, instead of storageAccountKey use:
+    //storageAccountSasToken: storageAccountSasToken
+}
+
 // Create the StreamUpload object
-let upload = new StreamUpload(sourceStream, destinationPath, storageAccountName, storageAccountKey)
+let upload = new StreamUpload(sourceStream, destinationPath, authData)
 
 // Pass options
 upload.blockSize = 10 * 1024 * 1024

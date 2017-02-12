@@ -59,6 +59,7 @@ class Authorization {
         // Extra parameters (optional)
         this._contentType = undefined
         this._contentMD5 = undefined
+        this._qs = {}
         if(extra &amp;&amp; _.isObject(extra) &amp;&amp; !_.isEmpty(extra)) {
             // Content-MD5 and Content-Type
             if(extra.contentMD5 &amp;&amp; _.isString(extra.contentMD5)) {
@@ -70,6 +71,7 @@ class Authorization {
             
             // Querystring
             if(extra.qs) {
+                this._qs = extra.qs
                 this._blob += '?' + qs.stringify(extra.qs)
             }
         }
@@ -84,9 +86,10 @@ class Authorization {
         // Generate the x-ms-date header
         this._date = (new Date()).toUTCString()
 
-        // Storage account name and key will be stored in these variables
+        // Storage account name, key and SAS token will be stored in these variables
         this._storageAccountName = false
-        this._storageAccountKey = false
+        this._storageAccountKey = undefined
+        this._storageAccountSasToken = undefined
     }
 
     /**
@@ -139,26 +142,47 @@ class Authorization {
      * 
      * @param {string} name - Name for the storage account
      * @param {string} key - Access key for the storage account
+     * @param {string} sasToken - SAS token for the storage account
      */
-    setStorageAccount(name, key) {
-        if(!name || !_.isString(name) || name.length &lt; 1 ||
-            !key || !_.isString(key) || key.length &lt; 1
-        ) {
-            throw Error('Parameters name and key must be non-empty strings')
+    setStorageAccount(name, key, sasToken) {
+        if(!name || !_.isString(name) || name.length &lt; 1) {
+            throw Error('Parameter name must be a non-empty string')
+        }
+
+        let hasKey = !!(key &amp;&amp; _.isString(key) &amp;&amp; key.length > 1)
+        let hasSasToken = !!(sasToken &amp;&amp; _.isString(sasToken) &amp;&amp; sasToken.length > 1)
+        if((!hasKey &amp;&amp; !hasSasToken) || (hasKey &amp;&amp; hasSasToken)) {
+            throw Error('One and only one of key and sasToken must be set and a non-empty string')
         }
 
         this._storageAccountName = name
-        this._storageAccountKey = key
+        this._storageAccountKey = hasKey ? key : undefined
+        
+        if(hasSasToken) {
+            // Ensure the SAS token starts with ?
+            if(sasToken.charAt(0) !== '?') {
+                sasToken = '?' + sasToken
+            }
+
+            this._storageAccountSasToken = hasSasToken ? sasToken : undefined
+        }
     }
 
     /**
-     * Generate the signature for the Authorization header
+     * Generate the signature for the Authorization header.
+     *
+     * When using SAS tokens, this returns null.
      * 
      * @return {string} Signature for the request
      */
     generateSignature() {
-        if(!this._storageAccountName || !this._storageAccountKey) {
-            throw Error('You must set storage account name and key')
+        if(!this._storageAccountName) {
+            throw Error('You must set storage account name and key or SAS token')
+        }
+
+        // When using SAS tokens, return null
+        if(this._storageAccountSasToken) {
+            return null
         }
 
         let components = [
@@ -179,13 +203,22 @@ class Authorization {
         components.push(join.join("\n"))
 
         // Build the "Canonicalized Resource String"
-        components.push('/' + this._storageAccountName + this._blob)
+        let resourceString = '/' + this._storageAccountName + this._blob
+
+        // If using SAS tokens, append them
+        if(this._storageAccountSasToken) {
+            resourceString += this._storageAccountSasToken + '&amp;api-version=' + this._apiVersion
+        }
+
+        components.push(resourceString)
 
         // String to sign
         let baseString = components.join("\n")
 
         // Compute the SHA256-HMAC
-        let hmac = crypto.createHmac('sha256', new Buffer(this._storageAccountKey, 'base64'))
+        let hmac = crypto.createHmac('sha256',
+            new Buffer(this._storageAccountKey || this._storageAccountSasToken, 'base64')
+        )
         hmac.update(baseString)
         let signature = hmac.digest('base64')
 
@@ -193,11 +226,18 @@ class Authorization {
     }
 
     /**
-     * Generate the Authorization header for the request
+     * Generate the Authorization header for the request.
+     *
+     * When using SAS tokens, this returns null.
      * 
      * @return {string} Value for the Authorization header
      */
     generateAuthorizationHeader() {
+        // When using SAS tokens, return null
+        if(this._storageAccountSasToken) {
+            return null
+        }
+        
         // Generate the signature
         let signature = this.generateSignature()
 
@@ -212,7 +252,9 @@ class Authorization {
     requestHeaders() {
         // Auth header
         let auth = this.generateAuthorizationHeader()
-        let merge = {'Authorization': auth}
+        let merge = auth
+            ? {'Authorization': auth}
+            : {}
         
         // Add Content-MD5 and Content-Type if necessary
         if(this._contentMD5) {
@@ -223,6 +265,27 @@ class Authorization {
         }
 
         return _.merge({}, this.headers, merge)
+    }
+
+    /**
+     * Return values for the querystring of URLs when uploading a blob. This is necessary when using SAS tokens.
+     *
+     * @return {Object} Querystring values to append to blob URL when uploading
+     */
+    querystring() {
+        // When using SAS tokens, add them
+        if(this._storageAccountSasToken) {
+            // Strip the leading ?, then parse using qs
+            let qsSas = qs.parse(this._storageAccountSasToken.substring(1))
+
+            // Add api-version
+            qsSas['api-version'] = this._apiVersion
+
+            return _.merge({}, this._qs, qsSas)
+        }
+        else {
+            return this._qs
+        }
     }
 }
 

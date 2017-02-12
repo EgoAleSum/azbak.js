@@ -38,6 +38,8 @@ $ azbak [options] <input> <destinationPath>
 
 You need to authenticate against Azure Blob Storage using a storage account name and an access key. azbak supports passing these values in the same way as the official Azure CLI, using environmental variables **`AZURE_STORAGE_ACCOUNT`** and **`AZURE_STORAGE_ACCESS_KEY`**.
 
+Alternatively, you can authenticate using [Shared Access Signature (SAS) tokens](https://docs.microsoft.com/en-us/azure/storage/storage-dotnet-shared-access-signature-part-1), which are limited in time and scope, and are a safer alternative for scripts, cron jobs, etc. To use SAS tokens, pass authentication data with the environmental variables **`AZURE_STORAGE_ACCOUNT`** and **`AZURE_STORAGE_SAS_TOKEN`**.
+
 ### Arguments
 
 **`input`** is either:
@@ -71,6 +73,11 @@ $ azbak archive.tar /bak/data01.tar
 
 # Second method: pass arguments inline
 $ AZURE_STORAGE_ACCOUNT="storageaccountname" AZURE_STORAGE_ACCESS_KEY="abc123" azbak archive.tar /bak/data01.tar
+
+# Use SAS Tokens
+$ export AZURE_STORAGE_ACCOUNT="storageaccountname"
+$ export AZURE_STORAGE_SAS_TOKEN="?sv=...&sig=..."
+$ azbak archive.tar /bak/data01.tar
 ````
 
 Upload file from local disk:
@@ -111,8 +118,16 @@ Example code:
 ````js
 const StreamUpload = require('azbak')
 
+// Authentication data
+let authData = {
+    storageAccountName: storageAccountName,
+    storageAccountKey: storageAccountKey,
+    // If using SAS token, instead of storageAccountKey use:
+    //storageAccountSasToken: storageAccountSasToken
+}
+
 // Create the StreamUpload object
-let upload = new StreamUpload(sourceStream, destinationPath, storageAccountName, storageAccountKey)
+let upload = new StreamUpload(sourceStream, destinationPath, authData)
 
 // Pass options
 upload.blockSize = 10 * 1024 * 1024

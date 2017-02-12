@@ -47,7 +47,7 @@ For files larger than 4.8TB, multiple blobs are created, with names .000, .001, 
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="StreamUpload"><span class="type-signature"></span>new StreamUpload<span class="signature">(sourceStream, blob, storageAccountName, storageAccountKey)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="StreamUpload"><span class="type-signature"></span>new StreamUpload<span class="signature">(sourceStream, blob, authData)</span><span class="type-signature"></span></h4>
 
     
 
@@ -136,6 +136,48 @@ For files larger than 4.8TB, multiple blobs are created, with names .000, .001, 
 
         <tr>
             
+                <td class="name"><code>authData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Authentication data</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
                 <td class="name"><code>storageAccountName</code></td>
             
 
@@ -152,7 +194,7 @@ For files larger than 4.8TB, multiple blobs are created, with names .000, .001, 
 
             
 
-            <td class="description last"><p>Name of the Azure Storage Account</p></td>
+            <td class="description last"><p>Name of the Azure Storage Account (required)</p></td>
         </tr>
 
     
@@ -175,7 +217,37 @@ For files larger than 4.8TB, multiple blobs are created, with names .000, .001, 
 
             
 
-            <td class="description last"><p>Key of the Azure Storage Account</p></td>
+            <td class="description last"><p>Key of the Azure Storage Account (required if <code>storageAccountSasToken</code> is not set)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>storageAccountSasToken</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>SAS token (required if <code>storageAccountKey</code> is not set)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -318,7 +390,7 @@ of each block.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line67">line 67</a>
+        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line69">line 69</a>
     </li></ul></dd>
     
 
@@ -395,7 +467,7 @@ you can download them in parallel. This has no effect on upload speed.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line93">line 93</a>
+        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line95">line 95</a>
     </li></ul></dd>
     
 
@@ -468,7 +540,7 @@ you can download them in parallel. This has no effect on upload speed.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line111">line 111</a>
+        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line113">line 113</a>
     </li></ul></dd>
     
 
@@ -547,7 +619,7 @@ Other options you might want to leverage:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line162">line 162</a>
+        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line164">line 164</a>
     </li></ul></dd>
     
 
@@ -620,7 +692,7 @@ This is enabled by default.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line128">line 128</a>
+        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line130">line 130</a>
     </li></ul></dd>
     
 
@@ -695,7 +767,7 @@ This is disabled by default.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line143">line 143</a>
+        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line145">line 145</a>
     </li></ul></dd>
     
 
@@ -865,7 +937,7 @@ This is disabled by default.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line266">line 266</a>
+        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line268">line 268</a>
     </li></ul></dd>
     
 
@@ -1018,7 +1090,7 @@ This is disabled by default.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line379">line 379</a>
+        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line391">line 391</a>
     </li></ul></dd>
     
 
@@ -1245,7 +1317,7 @@ This is disabled by default.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line318">line 318</a>
+        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line325">line 325</a>
     </li></ul></dd>
     
 
@@ -1349,7 +1421,7 @@ This is disabled by default.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line177">line 177</a>
+        <a href="StreamUpload.js.html">StreamUpload.js</a>, <a href="StreamUpload.js.html#line179">line 179</a>
     </li></ul></dd>
     
 

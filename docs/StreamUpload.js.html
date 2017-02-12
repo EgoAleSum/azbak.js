@@ -48,10 +48,12 @@ class StreamUpload {
      *
      * @param {Object} sourceStream - Stream containing the data to be sent
      * @param {string} blob - Name of the blob (starting with /)
-     * @param {string} storageAccountName - Name of the Azure Storage Account
-     * @param {string} storageAccountKey - Key of the Azure Storage Account
+     * @param {Object} authData - Authentication data
+     * @param {string} authData.storageAccountName - Name of the Azure Storage Account (required)
+     * @param {string} authData.storageAccountKey - Key of the Azure Storage Account (required if `storageAccountSasToken` is not set)
+     * @param {string} authData.storageAccountSasToken - SAS token (required if `storageAccountKey` is not set)
      */
-    constructor(sourceStream, blob, storageAccountName, storageAccountKey) {
+    constructor(sourceStream, blob, authData) {
         // Validate blob parameter
         if(!blob || typeof blob != 'string' || !blob.startsWith('/')) {
             throw Error('Parameter blob must be a string starting with /')
@@ -61,13 +63,13 @@ class StreamUpload {
         this._sourceStream = sourceStream
         this._blob = blob
 
-        if(storageAccountName &amp;&amp; storageAccountKey) {
-            this._storageAccountName = storageAccountName
-            this._storageAccountKey = storageAccountKey
+        // Store authentication data
+        if(!authData
+            || !authData.storageAccountName
+            || (!authData.storageAccountKey &amp;&amp; !authData.storageAccountSasToken)) {
+            throw Error('Storage account name and key or SAS token must be set')
         }
-        else {
-            throw Error('Storage account name and key not set')
-        }
+        this._authData = authData
 
         // Set default values for properties
         this._blockSize = StreamUpload.defaultBlockSize
@@ -78,7 +80,7 @@ class StreamUpload {
         this._endpoint = StreamUpload.defaultEndpoint
 
         // Blob url
-        this._blobUrl = 'https://' + this._storageAccountName + '.' + this.endpoint + blob
+        this._blobUrl = 'https://' + this._authData.storageAccountName + '.' + this.endpoint + blob
     }
 
     /**
@@ -304,7 +306,7 @@ class StreamUpload {
             contentType: 'application/octet-stream',
             qs: qsArgs
         })
-        auth.setStorageAccount(this._storageAccountName, this._storageAccountKey)
+        auth.setStorageAccount(this._authData.storageAccountName, this._authData.storageAccountKey, this._authData.storageAccountSasToken)
 
         // List of blocks as XML
         let xmlData = '&lt;?xml version="1.0" encoding="utf-8"?>&lt;BlockList>'
@@ -317,16 +319,21 @@ class StreamUpload {
         return request({
             method: 'PUT',
             url: this._blobUrl + seqId,
-            qs: qsArgs,
+            qs: auth.querystring(),
             body: xmlData,
             headers: auth.requestHeaders(),
 
             // Configuration for request-retry
             fullResponse: true,
             maxAttempts: 3,
-            retryStrategy: StreamUpload.retryStrategy
+            retryStrategy: StreamUpload.requestRetryStrategy
         })
         .then((response) =>  {
+            // If the status code is not 2xx, raise an error
+            if(response.statusCode &amp;&amp; (response.statusCode &lt; 200 || response.statusCode > 300)) {
+                throw Error('Request error (' + response.statusCode + '): ' + response.statusMessage)
+            }
+            
             // Add the "blobUrl" parameter to the response object
             response.blobUrl = this._blobUrl + seqId
             
@@ -371,25 +378,30 @@ class StreamUpload {
                 'comp': 'block'
             }
         })
-        auth.setStorageAccount(this._storageAccountName, this._storageAccountKey)
+        auth.setStorageAccount(this._authData.storageAccountName, this._authData.storageAccountKey, this._authData.storageAccountSasToken)
 
         // Request
+        let requestQs = auth.querystring()
+        requestQs['comp'] = 'block'
+        requestQs['blockid'] = blockId
         return request({
             method: 'PUT',
             url: this._blobUrl + seqId,
-            qs: {
-                'comp': 'block',
-                'blockid': blockId
-            },
+            qs: requestQs,
             body: block,
             headers: auth.requestHeaders(),
 
             // Configuration for request-retry
             fullResponse: true,
             maxAttempts: 3,
-            retryStrategy: StreamUpload.retryStrategy
+            retryStrategy: StreamUpload.requestRetryStrategy
         })
         .then((response) =>  {
+            // If the status code is not 2xx, raise an error
+            if(response.statusCode &amp;&amp; (response.statusCode &lt; 200 || response.statusCode > 300)) {
+                throw Error('Request error (' + response.statusCode + '): ' + response.statusMessage)
+            }
+
             // Add the "blobUrl" parameter to the response object
             response.blobUrl = this._blobUrl + seqId
             
@@ -434,8 +446,10 @@ StreamUpload.requestRetryStrategy = (error, response, body) => {
         return true
     }
 
-    // Expect a 201 status code
-    if(response.statusCode != 201) {
+    // Expect a 2xx status code
+    // Do not retry on 4xx errors, which are generally unrecoverable
+    // Retry on 5xx server errors
+    if(response.statusCode >= 500 &amp;&amp; response.statusCode &lt; 600) {
         return true
     }
 
