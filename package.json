@@ -1,7 +1,7 @@
 {
   "name": "azbak",
   "version": "2.0.0-beta.1",
-  "description": "",
+  "description": "Command-line utility and Node.js module to backup a file or a stream to Azure Blob Storage.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
