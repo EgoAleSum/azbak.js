@@ -18,6 +18,9 @@ describe('StreamUpload', function() {
 
     before('ensure credentials are passed', TestUtils.RequireAuth)
     before('get credentials', TestUtils.GetCredentials(storageAccount, containerName))
+
+    // TODO:
+    //after('remove test container')
     
     it('constructor', function() {
         // Get a readable stream
@@ -75,6 +78,29 @@ describe('StreamUpload', function() {
         }, /storage account key or SAS token/i)
     })
 
+    it('blobUrl and endpoint', function() {
+        // Initialize object
+        let upload = new StreamUpload(null, '/testcontainer/test.jpg', {
+            storageAccountName: storageAccount.name,
+            storageAccountKey: storageAccount.key
+        })
+
+        // Check url
+        assert.ok(upload.blobUrl.match(/^https\:\/\/(.*?)\/testcontainer\/test\.jpg$/))
+
+        // Default endpoint
+        assert.ok(upload.blobUrl.indexOf(StreamUpload.defaultEndpoint) >= 0)
+        assert.equal(upload.endpoint, StreamUpload.defaultEndpoint)
+
+        // Change endpoint
+        upload.endpoint = 'blob.core.cloudapi.de'
+        assert.equal(upload.endpoint, 'blob.core.cloudapi.de')
+        assert.ok(upload.blobUrl.indexOf(upload.endpoint) >= 0)
+
+        // Errors
+        assert.throws(() => { upload.endpoint = '' }, /endpoint/i)
+    })
+
     it('blockSize', function() {
         // Constants
         assert.ok(StreamUpload.defaultBlockSize)
@@ -122,5 +148,28 @@ describe('StreamUpload', function() {
         assert.throws(() => { upload.blocksPerBlob = -10 }, /blocks per blob/i)
         assert.throws(() => { upload.blocksPerBlob = StreamUpload.maxBlocksPerBlob + 1 }, /blocks per blob/i)
         assert.throws(() => { upload.blocksPerBlob = 'c' }, /blocks per blob/i)
+    })
+
+    it('concurrency', function() {
+        // Constants
+        assert.ok(StreamUpload.defaultConcurrency)
+
+        // Initialize object
+        let upload = new StreamUpload(null, '/' + containerName + '/test.jpg', {
+            storageAccountName: storageAccount.name,
+            storageAccountKey: storageAccount.key
+        })
+
+        // Default value
+        assert.equal(upload.concurrency, StreamUpload.defaultConcurrency)
+
+        // Setter test
+        upload.concurrency = 10
+        assert.equal(upload.concurrency, 10)
+
+        // Errors
+        assert.throws(() => { upload.concurrency = 0 }, /concurrency/i)
+        assert.throws(() => { upload.concurrency = -10 }, /concurrency/i)
+        assert.throws(() => { upload.concurrency = 'c' }, /concurrency/i)
     })
 })
