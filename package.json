@@ -4,7 +4,7 @@
   "description": "Command-line utility and Node.js module to backup a file or a stream to Azure Blob Storage.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "./node_modules/mocha/bin/mocha",
     "docs": "./node_modules/jsdoc/jsdoc.js -c .jsdoc.json"
   },
   "author": "Alessandro Segala",
@@ -27,6 +27,7 @@
     "through2-concurrent": "^1.1.0"
   },
   "devDependencies": {
-    "jsdoc": "^3.4.0"
+    "jsdoc": "^3.4.0",
+    "mocha": "^3.2.0"
   }
 }
