@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha",
+    "lint": "./node_modules/eslint/bin/eslint.js lib test",
     "docs": "./node_modules/jsdoc/jsdoc.js -c .jsdoc.json"
   },
   "author": "Alessandro Segala",
