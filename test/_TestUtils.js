@@ -20,7 +20,7 @@ module.exports = {
     /**
      * Returns a function that stores credentials in the storageAccount param.
      *
-     * The storageAccount param is modified
+     * The storageAccount param is modified.
      */
     GetCredentials: function(storageAccount, containerName) {
         return function(done) {
@@ -56,6 +56,25 @@ module.exports = {
                 }
 
                 storageAccount.sasToken = blobService.generateSharedAccessSignature(containerName, null, sharedAccessPolicy)
+
+                done()
+            })
+        }
+    },
+
+    /**
+     * Remove test container and all data.
+     */
+    RemoveTestContainer: function(storageAccount, containerName) {
+        return function(done) {
+            // Init azure-storage
+            const blobService = azure.createBlobService(storageAccount.name, storageAccount.key)
+
+            // Delete the container and all its contents
+            blobService.deleteContainer(containerName, (err, response) => {
+                if(err) {
+                    throw err
+                }
 
                 done()
             })

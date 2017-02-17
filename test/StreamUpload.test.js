@@ -19,8 +19,7 @@ describe('StreamUpload', function() {
     before('ensure credentials are passed', TestUtils.RequireAuth)
     before('get credentials', TestUtils.GetCredentials(storageAccount, containerName))
 
-    // TODO:
-    //after('remove test container')
+    after('remove test container', TestUtils.RemoveTestContainer(storageAccount, containerName))
     
     it('constructor', function() {
         // Get a readable stream
