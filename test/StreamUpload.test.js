@@ -1,3 +1,6 @@
+/* eslint-env node, mocha */
+/* eslint-disable prefer-arrow-callback, no-new */
+
 'use strict'
 
 const assert = require('assert')
@@ -17,7 +20,9 @@ describe('StreamUpload', function() {
     let containerName = 'test-' + parseInt(Date.now() / 1000, 10)
 
     before('ensure credentials are passed', TestUtils.RequireAuth)
-    before('get credentials', TestUtils.GetCredentials(storageAccount, containerName))
+    before('get credentials', TestUtils.GetCredentials(storageAccount))
+    before('create test container', TestUtils.CreateTestContainer(storageAccount, containerName))
+    before('get sas token', TestUtils.GetSASToken(storageAccount, containerName))
 
     after('remove test container', TestUtils.RemoveTestContainer(storageAccount, containerName))
     
@@ -26,49 +31,49 @@ describe('StreamUpload', function() {
         let useStream = fs.createReadStream('./assets/unsplash1.jpg')
 
         let credentials = {
-                storageAccountName: storageAccount.name,
-                storageAccountKey: storageAccount.key
-            }
+            storageAccountName: storageAccount.name,
+            storageAccountKey: storageAccount.key
+        }
 
         // Initialize object
         assert.doesNotThrow(() => {
-            let upload = new StreamUpload(useStream, '/' + containerName + '/test.jpg', credentials)
+            new StreamUpload(useStream, '/' + containerName + '/test.jpg', credentials)
         })
 
         // SAS Token
         assert.doesNotThrow(() => {
-            let upload = new StreamUpload(useStream, '/' + containerName + '/test.jpg', credentials)
+            new StreamUpload(useStream, '/' + containerName + '/test.jpg', credentials)
         })
 
         // Should accept anything as input
         assert.doesNotThrow(() => {
-            let upload = new StreamUpload(null, '/' + containerName + '/test.jpg', credentials)
+            new StreamUpload(null, '/' + containerName + '/test.jpg', credentials)
         })
 
         // Should not accept empty or invalid destination blobs
         assert.throws(() => {
-            let upload = new StreamUpload(null, '', credentials)
+            new StreamUpload(null, '', credentials)
         }, /blob/i)
         assert.throws(() => {
-            let upload = new StreamUpload('/invalid/', '', credentials)
+            new StreamUpload('/invalid/', '', credentials)
         }, /blob/i)
 
         // Requires authentication data
         assert.throws(() => {
-            let upload = new StreamUpload(null, '/' + containerName + '/test.jpg', {
+            new StreamUpload(null, '/' + containerName + '/test.jpg', {
                 // Name not set
                 storageAccountName: '',
                 storageAccountKey: storageAccount.key
             })
         }, /Storage account name/i)
         assert.throws(() => {
-            let upload = new StreamUpload(null, '/' + containerName + '/test.jpg', {
+            new StreamUpload(null, '/' + containerName + '/test.jpg', {
                 // No key or SAS token
                 storageAccountName: storageAccount.name
             })
         }, /storage account key or SAS token/i)
         assert.throws(() => {
-            let upload = new StreamUpload(null, '/' + containerName + '/test.jpg', {
+            new StreamUpload(null, '/' + containerName + '/test.jpg', {
                 // Both key and SAS token
                 storageAccountName: storageAccount.name,
                 storageAccountKey: storageAccount.key,
@@ -85,7 +90,7 @@ describe('StreamUpload', function() {
         })
 
         // Check url
-        assert.ok(upload.blobUrl.match(/^https\:\/\/(.*?)\/testcontainer\/test\.jpg$/))
+        assert.ok(upload.blobUrl.match(/^https:\/\/(.*?)\/testcontainer\/test\.jpg$/))
 
         // Default endpoint
         assert.ok(upload.blobUrl.indexOf(StreamUpload.defaultEndpoint) >= 0)
