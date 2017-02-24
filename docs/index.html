@@ -53,6 +53,7 @@ Looking for the stable <a href="https://github.com/EgoAleSum/azbak.js/tree/v1.0.
 <li>Fully stream-based</li>
 <li>The CLI supports piping input from a stream or reading from a file on disk</li>
 <li>Automatically chunks files/streams bigger than the maximum blob size (~4.8 TB) into multiple blobs</li>
+<li>Supports SAS Tokens</li>
 <li>Cross-platform</li>
 <li>Small memory footprint</li>
 </ul>
@@ -62,12 +63,13 @@ Looking for the stable <a href="https://github.com/EgoAleSum/azbak.js/tree/v1.0.
 $ npm install --global azbak</code></pre><h2>Usage</h2><p>Command reference:</p>
 <pre class="prettyprint source"><code>$ azbak [options] &lt;input> &lt;destinationPath></code></pre><h3>Authentication</h3><p>You need to authenticate against Azure Blob Storage using a storage account name and an access key. azbak supports passing these values in the same way as the official Azure CLI, using environmental variables <strong><code>AZURE_STORAGE_ACCOUNT</code></strong> and <strong><code>AZURE_STORAGE_ACCESS_KEY</code></strong>.</p>
 <p>Alternatively, you can authenticate using <a href="https://docs.microsoft.com/en-us/azure/storage/storage-dotnet-shared-access-signature-part-1">Shared Access Signature (SAS) tokens</a>, which are limited in time and scope, and are a safer alternative for scripts, cron jobs, etc. To use SAS tokens, pass authentication data with the environmental variables <strong><code>AZURE_STORAGE_ACCOUNT</code></strong> and <strong><code>AZURE_STORAGE_SAS_TOKEN</code></strong>.</p>
+<p>It's possible to pass authentication data also as command line arguments: <code>--storage-account</code>, <code>--access-key</code> and <code>--sas-token</code>. This is implemented for those scenarios that don't easily support using environmental variables (e.g. certain scripts); however, it's recommended to use environmental variables whenever possible.</p>
 <h3>Arguments</h3><p><strong><code>input</code></strong> is either:</p>
 <ul>
 <li>The path of a local file to upload (e.g. <code>/path/to/file.jpg</code>)</li>
 <li>A dash (<strong><code>-</code></strong>) to read from stdin</li>
 </ul>
-<p><strong><code>destinationPath</code></strong> is the path inside the Azure Blob Storage account used as destination. It has to start with a slash and include a container name (e.g. <code>/container/path/to/file.jpg</code>). The destination name always has a sequence number automatically appended (e.g. <code>.000</code>, <code>.001</code>, etc).</p>
+<p><strong><code>destinationPath</code></strong> is the path inside the Azure Blob Storage account used as destination. It has to start with a slash and include a container name (e.g. <code>/container/path/to/file.jpg</code>). The destination name always has a sequence number automatically appended (e.g. <code>.000</code>, <code>.001</code>, etc), unless the <code>--no-suffix</code> option is passed.</p>
 <h3>Options</h3><p>The following command line options are available:</p>
 <ul>
 <li><strong><code>-b</code></strong> or <strong><code>--blocks</code></strong>: Number of blocks in each blob sent to Azure Blob Storage, each of a fixed size. The maximum (and default) value is 50,000. Setting this to a lower value can lead to more, separate blobs to be created. Because each blob has a performance target of 60MB/s, having your data split into multiple blobs allows for parallel downloads and so potentially faster restores. This has no impact on upload speed, however, as uploads are always sequential.</li>
@@ -76,6 +78,9 @@ $ npm install --global azbak</code></pre><h2>Usage</h2><p>Command reference:</p>
 <li><strong><code>--no-suffix</code></strong>: Upload a single blob only, without appending a numeric suffix to the file name (e.g. <code>.000</code>). Please note that if the file is too big to fit in one blob (as defined by <code>blocks * blockSize</code>), the upload will fail.</li>
 <li><strong><code>--endpoint</code></strong>: Endpoint to use. The default value is <code>blob.core.windows.net</code>, which is used by the global Azure infrastructure. Other common values are <code>blob.core.cloudapi.de</code> for Azure Germany and <code>blob.core.chinacloudapi.cn</code> for Azure China. Users of Azure Stack can enter their custom endpoint.</li>
 <li><strong><code>--no-md5</code></strong>: Skip calculating MD5 checksums locally before uploading blocks. This can speed up operation on slower systems, but offers no protection against data corruption while in transit.</li>
+<li><strong><code>--storage-account</code></strong>: Name of the Azure Storage Account to use. This is an alternative to passing the environmental variable <code>AZURE_STORAGE_ACCOUNT</code>.</li>
+<li><strong><code>--access-key</code></strong>: Access Key for the Azure Storage Account to use. This is an alternative to passing the environmental variable <code>AZURE_STORAGE_ACCESS_KEY</code>.</li>
+<li><strong><code>--sas-token</code></strong>: SAS Token to use for authentication. This is an alternative to passing the environmental variable <code>AZURE_STORAGE_SAS_TOKEN</code>.</li>
 <li><strong><code>-h</code></strong> or <strong><code>--help</code></strong>: Prints help message</li>
 <li><strong><code>-V</code></strong> or <strong><code>--version</code></strong>: Prints application version</li>
 </ul>
@@ -91,7 +96,10 @@ $ AZURE_STORAGE_ACCOUNT=&quot;storageaccountname&quot; AZURE_STORAGE_ACCESS_KEY=
 # Use SAS Tokens
 $ export AZURE_STORAGE_ACCOUNT=&quot;storageaccountname&quot;
 $ export AZURE_STORAGE_SAS_TOKEN=&quot;?sv=...&sig=...&quot;
-$ azbak archive.tar /bak/data01.tar</code></pre><p>Upload file from local disk:</p>
+$ azbak archive.tar /bak/data01.tar
+
+# Pass authentication data as command line arguments
+$ azbak archive.tar /bak/data01.tar --storage-account &quot;storageaccountname&quot; --sas-token &quot;?sv=...&sig=...&quot;</code></pre><p>Upload file from local disk:</p>
 <pre class="prettyprint source lang-sh"><code># Upload file archive.tar to Azure Blob Storage, named &quot;path/data01.tar&quot; inside the Storage Account &quot;bak&quot;
 $ azbak archive.tar /bak/path/data01.tar</code></pre><p>Stream from stdin:</p>
 <pre class="prettyprint source lang-sh"><code># Syntax
