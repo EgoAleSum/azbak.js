@@ -10,6 +10,7 @@ Features:
 - Fully stream-based
 - The CLI supports piping input from a stream or reading from a file on disk
 - Automatically chunks files/streams bigger than the maximum blob size (~4.8 TB) into multiple blobs
+- Supports SAS Tokens
 - Cross-platform
 - Small memory footprint
 
@@ -40,13 +41,15 @@ You need to authenticate against Azure Blob Storage using a storage account name
 
 Alternatively, you can authenticate using [Shared Access Signature (SAS) tokens](https://docs.microsoft.com/en-us/azure/storage/storage-dotnet-shared-access-signature-part-1), which are limited in time and scope, and are a safer alternative for scripts, cron jobs, etc. To use SAS tokens, pass authentication data with the environmental variables **`AZURE_STORAGE_ACCOUNT`** and **`AZURE_STORAGE_SAS_TOKEN`**.
 
+It's possible to pass authentication data also as command line arguments: `--storage-account`, `--access-key` and `--sas-token`. This is implemented for those scenarios that don't easily support using environmental variables (e.g. certain scripts); however, it's recommended to use environmental variables whenever possible.
+
 ### Arguments
 
 **`input`** is either:
 - The path of a local file to upload (e.g. `/path/to/file.jpg`)
 - A dash (**`-`**) to read from stdin
 
-**`destinationPath`** is the path inside the Azure Blob Storage account used as destination. It has to start with a slash and include a container name (e.g. `/container/path/to/file.jpg`). The destination name always has a sequence number automatically appended (e.g. `.000`, `.001`, etc).
+**`destinationPath`** is the path inside the Azure Blob Storage account used as destination. It has to start with a slash and include a container name (e.g. `/container/path/to/file.jpg`). The destination name always has a sequence number automatically appended (e.g. `.000`, `.001`, etc), unless the `--no-suffix` option is passed.
 
 ### Options
 
@@ -58,6 +61,9 @@ The following command line options are available:
 - **`--no-suffix`**: Upload a single blob only, without appending a numeric suffix to the file name (e.g. `.000`). Please note that if the file is too big to fit in one blob (as defined by `blocks * blockSize`), the upload will fail.
 - **`--endpoint`**: Endpoint to use. The default value is `blob.core.windows.net`, which is used by the global Azure infrastructure. Other common values are `blob.core.cloudapi.de` for Azure Germany and `blob.core.chinacloudapi.cn` for Azure China. Users of Azure Stack can enter their custom endpoint.
 - **`--no-md5`**: Skip calculating MD5 checksums locally before uploading blocks. This can speed up operation on slower systems, but offers no protection against data corruption while in transit.
+- **`--storage-account`**: Name of the Azure Storage Account to use. This is an alternative to passing the environmental variable `AZURE_STORAGE_ACCOUNT`.
+- **`--access-key`**: Access Key for the Azure Storage Account to use. This is an alternative to passing the environmental variable `AZURE_STORAGE_ACCESS_KEY`.
+- **`--sas-token`**: SAS Token to use for authentication. This is an alternative to passing the environmental variable `AZURE_STORAGE_SAS_TOKEN`.
 - **`-h`** or **`--help`**: Prints help message
 - **`-V`** or **`--version`**: Prints application version
 
@@ -78,6 +84,9 @@ $ AZURE_STORAGE_ACCOUNT="storageaccountname" AZURE_STORAGE_ACCESS_KEY="abc123" a
 $ export AZURE_STORAGE_ACCOUNT="storageaccountname"
 $ export AZURE_STORAGE_SAS_TOKEN="?sv=...&sig=..."
 $ azbak archive.tar /bak/data01.tar
+
+# Pass authentication data as command line arguments
+$ azbak archive.tar /bak/data01.tar --storage-account "storageaccountname" --sas-token "?sv=...&sig=..."
 ````
 
 Upload file from local disk:
