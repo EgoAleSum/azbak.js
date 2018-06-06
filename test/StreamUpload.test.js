@@ -28,7 +28,7 @@ describe('StreamUpload', function() {
     
     it('constructor', function() {
         // Get a readable stream
-        let useStream = fs.createReadStream('./assets/unsplash1.jpg')
+        let useStream = fs.createReadStream('./test/assets/unsplash1.jpg')
 
         let credentials = {
             storageAccountName: storageAccount.name,
