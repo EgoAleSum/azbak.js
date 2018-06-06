@@ -174,6 +174,7 @@ cat archive.tar | docker run \
 # Same as above, but passing credentials as environmental variables
 cat archive.tar | docker run \
   --rm \
+  -i \
   -e "AZURE_STORAGE_ACCOUNT=storageaccountname" \
   -e "AZURE_STORAGE_ACCESS_KEY=abc123" \
   egoalesum/azbak \
