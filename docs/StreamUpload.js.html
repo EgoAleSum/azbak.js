@@ -255,7 +255,7 @@ class StreamUpload {
                     //DebugLog('(Seq ' + seqId + ') Starting upload of block ' + blockNum + ', length ' + chunk.length + ', blockId ' + blockId)
 
                     this.putBlock(chunk, blockId, seqId)
-                        .then((response) => {
+                        .then((/*response*/) => {
                             //DebugLog('(Seq ' + seqId + ') Finished upload of chunk ' + blockNum  + ', blockId ' + blockId, response.body)
                             callback()
                         })
@@ -277,36 +277,36 @@ class StreamUpload {
                 .pipe(transformFunction)
         })
         // Second step: commit the blobs by sending the list
-        .then((chunkCount) => {
+            .then((chunkCount) => {
             //DebugLog('Uploaded total: ' + chunkCount)
 
             // Promises to return
-            let requests = []
+                let requests = []
 
-            // Count how many parts (sequences) we have
-            let seqFull = !(chunkCount % this.blocksPerBlob)
-            let seqCount = Math.trunc(chunkCount /  this.blocksPerBlob) + (seqFull ? 0 : 1)
+                // Count how many parts (sequences) we have
+                let seqFull = !(chunkCount % this.blocksPerBlob)
+                let seqCount = Math.trunc(chunkCount /  this.blocksPerBlob) + (seqFull ? 0 : 1)
 
-            // Commit each part/sequence
-            for(let i = 0; i &lt; seqCount; i++) {
-                let seqId = ( this.singleBlob ? '' : '.' + Utils.zeroPad(i, 3) )
+                // Commit each part/sequence
+                for(let i = 0; i &lt; seqCount; i++) {
+                    let seqId = ( this.singleBlob ? '' : '.' + Utils.zeroPad(i, 3) )
 
-                // Unless this is the last sequence, we will always have blocksPerBlob blocks
-                let blocksInSeq = (i === (seqCount - 1) &amp;&amp; !seqFull)
-                    ? (chunkCount % this.blocksPerBlob)
-                    : this.blocksPerBlob
+                    // Unless this is the last sequence, we will always have blocksPerBlob blocks
+                    let blocksInSeq = (i === (seqCount - 1) &amp;&amp; !seqFull)
+                        ? (chunkCount % this.blocksPerBlob)
+                        : this.blocksPerBlob
 
-                requests.push(this.commitBlockBlob(blocksInSeq, seqId))
-            }
+                    requests.push(this.commitBlockBlob(blocksInSeq, seqId))
+                }
 
-            return Promise.all(requests)
-        })
-        .then((requests) => {
-            // Gather all URLs
-            return requests.map((value) => {
-                return value.blobUrl
+                return Promise.all(requests)
             })
-        })
+            .then((requests) => {
+            // Gather all URLs
+                return requests.map((value) => {
+                    return value.blobUrl
+                })
+            })
     }
 
     /**
@@ -351,18 +351,18 @@ class StreamUpload {
             maxAttempts: 3,
             retryStrategy: StreamUpload.requestRetryStrategy
         })
-        .then((response) =>  {
+            .then((response) =>  {
             // If the status code is not 2xx, raise an error
-            if(response.statusCode &amp;&amp; (response.statusCode &lt; 200 || response.statusCode > 300)) {
-                throw Error('Request error (' + response.statusCode + '): ' + response.statusMessage)
-            }
+                if(response.statusCode &amp;&amp; (response.statusCode &lt; 200 || response.statusCode > 300)) {
+                    throw Error('Request error (' + response.statusCode + '): ' + response.statusMessage)
+                }
             
-            // Add the "blobUrl" parameter to the response object
-            response.blobUrl = this.blobUrl + seqId
+                // Add the "blobUrl" parameter to the response object
+                response.blobUrl = this.blobUrl + seqId
             
-            // Pass response down the chain
-            return response
-        })
+                // Pass response down the chain
+                return response
+            })
     }
 
     /**
@@ -417,18 +417,18 @@ class StreamUpload {
             maxAttempts: 3,
             retryStrategy: StreamUpload.requestRetryStrategy
         })
-        .then((response) =>  {
+            .then((response) =>  {
             // If the status code is not 2xx, raise an error
-            if(response.statusCode &amp;&amp; (response.statusCode &lt; 200 || response.statusCode > 300)) {
-                throw Error('Request error (' + response.statusCode + '): ' + response.statusMessage)
-            }
+                if(response.statusCode &amp;&amp; (response.statusCode &lt; 200 || response.statusCode > 300)) {
+                    throw Error('Request error (' + response.statusCode + '): ' + response.statusMessage)
+                }
 
-            // Add the "blobUrl" parameter to the response object
-            response.blobUrl = this.blobUrl + seqId
+                // Add the "blobUrl" parameter to the response object
+                response.blobUrl = this.blobUrl + seqId
             
-            // Pass response down the chain
-            return response
-        })
+                // Pass response down the chain
+                return response
+            })
     }
 
     /**
@@ -494,7 +494,7 @@ module.exports = StreamUpload
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
 </footer>
 
 <script> prettyPrint(); </script>

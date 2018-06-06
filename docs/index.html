@@ -43,11 +43,7 @@
 
 
     <section>
-        <article><blockquote>
-<p><strong>NOTE</strong> This branch contains the work-in-progress code for azbak 2.0 beta.
-Looking for the stable <a href="https://github.com/EgoAleSum/azbak.js/tree/v1.0.0">1.0.0 release</a>?</p>
-</blockquote>
-<h1>azbak</h1><p>Command-line utility and Node.js module to backup a file or a stream to Azure Blob Storage.</p>
+        <article><h1>azbak</h1><p>Command-line utility and Node.js module to backup a file or a stream to Azure Blob Storage.</p>
 <p>Features:</p>
 <ul>
 <li>Fully stream-based</li>
@@ -61,7 +57,7 @@ Looking for the stable <a href="https://github.com/EgoAleSum/azbak.js/tree/v1.0.
 <p>You can install the application from NPM:</p>
 <pre class="prettyprint source lang-sh"><code># Depending on your system, you may need to run this as root or add &quot;sudo&quot;
 $ npm install --global azbak</code></pre><h2>Usage</h2><p>Command reference:</p>
-<pre class="prettyprint source"><code>$ azbak [options] &lt;input> &lt;destinationPath></code></pre><h3>Authentication</h3><p>You need to authenticate against Azure Blob Storage using a storage account name and an access key. azbak supports passing these values in the same way as the official Azure CLI, using environmental variables <strong><code>AZURE_STORAGE_ACCOUNT</code></strong> and <strong><code>AZURE_STORAGE_ACCESS_KEY</code></strong>.</p>
+<pre class="prettyprint source lang-sh"><code>azbak [options] &lt;input> &lt;destinationPath></code></pre><h3>Authentication</h3><p>You need to authenticate against Azure Blob Storage using a storage account name and an access key. azbak supports passing these values in the same way as the official Azure CLI, using environmental variables <strong><code>AZURE_STORAGE_ACCOUNT</code></strong> and <strong><code>AZURE_STORAGE_ACCESS_KEY</code></strong>.</p>
 <p>Alternatively, you can authenticate using <a href="https://docs.microsoft.com/en-us/azure/storage/storage-dotnet-shared-access-signature-part-1">Shared Access Signature (SAS) tokens</a>, which are limited in time and scope, and are a safer alternative for scripts, cron jobs, etc. To use SAS tokens, pass authentication data with the environmental variables <strong><code>AZURE_STORAGE_ACCOUNT</code></strong> and <strong><code>AZURE_STORAGE_SAS_TOKEN</code></strong>.</p>
 <p>It's possible to pass authentication data also as command line arguments: <code>--storage-account</code>, <code>--access-key</code> and <code>--sas-token</code>. This is implemented for those scenarios that don't easily support using environmental variables (e.g. certain scripts); however, it's recommended to use environmental variables whenever possible.</p>
 <h3>Arguments</h3><p><strong><code>input</code></strong> is either:</p>
@@ -86,29 +82,29 @@ $ npm install --global azbak</code></pre><h2>Usage</h2><p>Command reference:</p>
 </ul>
 <h3>Examples</h3><p>Set credentials:</p>
 <pre class="prettyprint source lang-sh"><code># First method: use export statements (bash syntax)
-$ export AZURE_STORAGE_ACCOUNT=&quot;storageaccountname&quot;
-$ export AZURE_STORAGE_ACCESS_KEY=&quot;abc123&quot;
-$ azbak archive.tar /bak/data01.tar
+export AZURE_STORAGE_ACCOUNT=&quot;storageaccountname&quot;
+export AZURE_STORAGE_ACCESS_KEY=&quot;abc123&quot;
+azbak archive.tar /bak/data01.tar
 
 # Second method: pass arguments inline
-$ AZURE_STORAGE_ACCOUNT=&quot;storageaccountname&quot; AZURE_STORAGE_ACCESS_KEY=&quot;abc123&quot; azbak archive.tar /bak/data01.tar
+AZURE_STORAGE_ACCOUNT=&quot;storageaccountname&quot; AZURE_STORAGE_ACCESS_KEY=&quot;abc123&quot; azbak archive.tar /bak/data01.tar
 
 # Use SAS Tokens
-$ export AZURE_STORAGE_ACCOUNT=&quot;storageaccountname&quot;
-$ export AZURE_STORAGE_SAS_TOKEN=&quot;?sv=...&sig=...&quot;
-$ azbak archive.tar /bak/data01.tar
+export AZURE_STORAGE_ACCOUNT=&quot;storageaccountname&quot;
+export AZURE_STORAGE_SAS_TOKEN=&quot;?sv=...&sig=...&quot;
+azbak archive.tar /bak/data01.tar
 
 # Pass authentication data as command line arguments
-$ azbak archive.tar /bak/data01.tar --storage-account &quot;storageaccountname&quot; --sas-token &quot;?sv=...&sig=...&quot;</code></pre><p>Upload file from local disk:</p>
+azbak archive.tar /bak/data01.tar --storage-account &quot;storageaccountname&quot; --sas-token &quot;?sv=...&sig=...&quot;</code></pre><p>Upload file from local disk:</p>
 <pre class="prettyprint source lang-sh"><code># Upload file archive.tar to Azure Blob Storage, named &quot;path/data01.tar&quot; inside the Storage Account &quot;bak&quot;
-$ azbak archive.tar /bak/path/data01.tar</code></pre><p>Stream from stdin:</p>
+azbak archive.tar /bak/path/data01.tar</code></pre><p>Stream from stdin:</p>
 <pre class="prettyprint source lang-sh"><code># Syntax
-$ azbak - /container/file-from-stdin.tar
+azbak - /container/file-from-stdin.tar
 
 # Example: gzip file and upload
-$ cat largefile.dat | gzip | azbak - /bak/largefile.dat.gz</code></pre><h1>Library</h1><h2>Installation</h2><p>azbak requires Node.js version 4.0 or higher and NPM.</p>
+cat largefile.dat | gzip | azbak - /bak/largefile.dat.gz</code></pre><h1>Library</h1><h2>Installation</h2><p>azbak requires Node.js version 4.0 or higher and NPM.</p>
 <p>You can install the package from NPM:</p>
-<pre class="prettyprint source lang-sh"><code>$ npm install --save azbak</code></pre><h2>Usage</h2><p>You can use azbak as a library for other Node.js applications.</p>
+<pre class="prettyprint source lang-sh"><code>npm install --save azbak</code></pre><h2>Usage</h2><p>You can use azbak as a library for other Node.js applications.</p>
 <p>Example code:</p>
 <pre class="prettyprint source lang-js"><code>const StreamUpload = require('azbak')
 
@@ -136,7 +132,36 @@ uploadPromise.then((urls) => {
 }, (err) => {
     // In case of errors
     console.log('Upload failed: ', err)
-})</code></pre><p>Full API documentation is available in the <a href="docs">/docs</a> folder.</p></article>
+})</code></pre><p>Full API documentation is available in the <a href="docs">/docs</a> folder.</p>
+<h1>Docker</h1><p>This utility is available as a Docker container too, published on Docker Hub on <a href="https://hub.docker.com/r/egoalesum/azbak/">egoalesum/azbak</a> You can pass data to be uploaded via stdin, or by mounting a local volume. Examples:</p>
+<pre class="prettyprint source lang-sh"><code># Uploading a file from stdin
+# Note the -i flag for docker run
+# We also need to explicitly specify the &quot;azbak&quot; binary, or docker run will assume &quot;-&quot; is the executable
+# You can pass any argument to azbak as if it were to be installed locally
+cat archive.tar | docker run \
+  --rm \
+  -i \
+  egoalesum/azbak \
+    azbak - /container/archive.tar \
+      --storage-account &quot;storageaccountname&quot; \
+      --access-key &quot;abc123&quot;
+
+# Same as above, but passing credentials as environmental variables
+cat archive.tar | docker run \
+  --rm \
+  -e &quot;AZURE_STORAGE_ACCOUNT=storageaccountname&quot; \
+  -e &quot;AZURE_STORAGE_ACCESS_KEY=abc123&quot; \
+  egoalesum/azbak \
+    azbak - /container/archive.tar
+
+# Mounting a local volume to upload a file from disk (test.jpg from the current folder)
+docker run \
+  --rm \
+  -v &quot;${PWD}/test.jpg:/tmp/test.jpg&quot; \
+  -e &quot;AZURE_STORAGE_ACCOUNT=storageaccountname&quot; \
+  -e &quot;AZURE_STORAGE_ACCESS_KEY=abc123&quot; \
+  egoalesum/azbak \
+    azbak /tmp/test.jpg /container/test.jpg</code></pre></article>
     </section>
 
 
@@ -153,7 +178,7 @@ uploadPromise.then((urls) => {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
 </footer>
 
 <script> prettyPrint(); </script>
