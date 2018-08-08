@@ -156,7 +156,7 @@ Full API documentation is available in the [/docs](docs) folder.
 
 # Docker
 
-This utility is available as a Docker container too, published on Docker Hub on [egoalesum/azbak](https://hub.docker.com/r/egoalesum/azbak/) You can pass data to be uploaded via stdin, or by mounting a local volume. Examples:
+This utility is available as a Docker container too, published on Docker Hub on [italypaleale/azbak](https://hub.docker.com/r/italypaleale/azbak/) You can pass data to be uploaded via stdin, or by mounting a local volume. Examples:
 
 ````sh
 # Uploading a file from stdin
@@ -166,7 +166,7 @@ This utility is available as a Docker container too, published on Docker Hub on 
 cat archive.tar | docker run \
   --rm \
   -i \
-  egoalesum/azbak \
+  italypaleale/azbak \
     azbak - /container/archive.tar \
       --storage-account "storageaccountname" \
       --access-key "abc123"
@@ -177,7 +177,7 @@ cat archive.tar | docker run \
   -i \
   -e "AZURE_STORAGE_ACCOUNT=storageaccountname" \
   -e "AZURE_STORAGE_ACCESS_KEY=abc123" \
-  egoalesum/azbak \
+  italypaleale/azbak \
     azbak - /container/archive.tar
 
 # Mounting a local volume to upload a file from disk (test.jpg from the current folder)
@@ -186,6 +186,6 @@ docker run \
   -v "${PWD}/test.jpg:/tmp/test.jpg" \
   -e "AZURE_STORAGE_ACCOUNT=storageaccountname" \
   -e "AZURE_STORAGE_ACCESS_KEY=abc123" \
-  egoalesum/azbak \
+  italypaleale/azbak \
     azbak /tmp/test.jpg /container/test.jpg
 ````

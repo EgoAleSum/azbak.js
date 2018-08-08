@@ -133,7 +133,7 @@ uploadPromise.then((urls) => {
     // In case of errors
     console.log('Upload failed: ', err)
 })</code></pre><p>Full API documentation is available in the <a href="docs">/docs</a> folder.</p>
-<h1>Docker</h1><p>This utility is available as a Docker container too, published on Docker Hub on <a href="https://hub.docker.com/r/egoalesum/azbak/">egoalesum/azbak</a> You can pass data to be uploaded via stdin, or by mounting a local volume. Examples:</p>
+<h1>Docker</h1><p>This utility is available as a Docker container too, published on Docker Hub on <a href="https://hub.docker.com/r/italypaleale/azbak/">italypaleale/azbak</a> You can pass data to be uploaded via stdin, or by mounting a local volume. Examples:</p>
 <pre class="prettyprint source lang-sh"><code># Uploading a file from stdin
 # Note the -i flag for docker run
 # We also need to explicitly specify the &quot;azbak&quot; binary, or docker run will assume &quot;-&quot; is the executable
@@ -141,7 +141,7 @@ uploadPromise.then((urls) => {
 cat archive.tar | docker run \
   --rm \
   -i \
-  egoalesum/azbak \
+  italypaleale/azbak \
     azbak - /container/archive.tar \
       --storage-account &quot;storageaccountname&quot; \
       --access-key &quot;abc123&quot;
@@ -149,9 +149,10 @@ cat archive.tar | docker run \
 # Same as above, but passing credentials as environmental variables
 cat archive.tar | docker run \
   --rm \
+  -i \
   -e &quot;AZURE_STORAGE_ACCOUNT=storageaccountname&quot; \
   -e &quot;AZURE_STORAGE_ACCESS_KEY=abc123&quot; \
-  egoalesum/azbak \
+  italypaleale/azbak \
     azbak - /container/archive.tar
 
 # Mounting a local volume to upload a file from disk (test.jpg from the current folder)
@@ -160,7 +161,7 @@ docker run \
   -v &quot;${PWD}/test.jpg:/tmp/test.jpg&quot; \
   -e &quot;AZURE_STORAGE_ACCOUNT=storageaccountname&quot; \
   -e &quot;AZURE_STORAGE_ACCESS_KEY=abc123&quot; \
-  egoalesum/azbak \
+  italypaleale/azbak \
     azbak /tmp/test.jpg /container/test.jpg</code></pre></article>
     </section>
 

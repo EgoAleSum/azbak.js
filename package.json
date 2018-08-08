@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/EgoAleSum/azbak.js.git"
+    "url": "https://github.com/ItalyPaleAle/azbak.js.git"
   },
   "dependencies": {
     "commander": "^2.17.1",
