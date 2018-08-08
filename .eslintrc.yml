@@ -1,13 +1,17 @@
 env:
   es6: true
   node: true
-extends: 'node'
+extends: 'eslint:recommended'
 parserOptions:
-  ecmaVersion: 2015
+  ecmaVersion: 8
 rules:
   indent:
     - error
     - 4
+    - SwitchCase: 1
+      MemberExpression: 1
+      ArrayExpression: 1
+      ObjectExpression: 1
   linebreak-style:
     - error
     - unix
@@ -17,15 +21,60 @@ rules:
   semi:
     - error
     - never
-  
-  no-console: off
-  import/no-commonjs: off
-  import/no-nodejs-modules: off
-  prefer-const: off
-  no-sync: off
-  eqeqeq: off
-  no-process-exit: off
-  class-methods-use-this: off
-  arrow-body-style:
+  no-var:
+    - error
+  prefer-const:
+    - warn
+  no-unused-vars:
+    - error
+    - args: none
+  brace-style:
+    - error
+    - stroustrup
+    - allowSingleLine: false
+  eol-last:
     - error
     - always
+  space-before-function-paren:
+    - error
+    - anonymous: never
+      named: never
+      asyncArrow: always
+  keyword-spacing:
+    - error
+    - before: true
+      after: true
+  key-spacing:
+    - error
+    - beforeColon: false
+      afterColon: true
+      mode: strict
+  comma-spacing:
+    - error
+  arrow-spacing:
+    - error
+  array-bracket-spacing:
+    - error
+    - never
+    - singleValue: false
+      objectsInArrays: true
+      arraysInArrays: true
+  object-curly-spacing:
+    - error
+    - never
+  space-in-parens:
+    - error
+    - never
+  prefer-arrow-callback:
+    - warn
+  no-return-await:
+    - error
+  no-console:
+    - warn
+  no-nested-ternary:
+    - error
+  no-unneeded-ternary:
+    - warn
+  operator-linebreak:
+    - error
+    - after

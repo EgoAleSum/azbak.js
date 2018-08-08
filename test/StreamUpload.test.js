@@ -10,14 +10,14 @@ const TestUtils = require('./_TestUtils')
 const StreamUpload = require('../lib/StreamUpload')
 
 describe('StreamUpload', function() {
-    let storageAccount = {
+    const storageAccount = {
         name: null,
         key: null,
         sasToken: null
     }
 
     // Container name where data is stored
-    let containerName = 'test-' + parseInt(Date.now() / 1000, 10)
+    const containerName = 'test-' + parseInt(Date.now() / 1000, 10)
 
     before('ensure credentials are passed', TestUtils.RequireAuth)
     before('get credentials', TestUtils.GetCredentials(storageAccount))
@@ -28,9 +28,9 @@ describe('StreamUpload', function() {
     
     it('constructor', function() {
         // Get a readable stream
-        let useStream = fs.createReadStream('./test/assets/unsplash1.jpg')
+        const useStream = fs.createReadStream('./test/assets/unsplash1.jpg')
 
-        let credentials = {
+        const credentials = {
             storageAccountName: storageAccount.name,
             storageAccountKey: storageAccount.key
         }
@@ -84,7 +84,7 @@ describe('StreamUpload', function() {
 
     it('blobUrl and endpoint', function() {
         // Initialize object
-        let upload = new StreamUpload(null, '/testcontainer/test.jpg', {
+        const upload = new StreamUpload(null, '/testcontainer/test.jpg', {
             storageAccountName: storageAccount.name,
             storageAccountKey: storageAccount.key
         })
@@ -102,7 +102,9 @@ describe('StreamUpload', function() {
         assert.ok(upload.blobUrl.indexOf(upload.endpoint) >= 0)
 
         // Errors
-        assert.throws(() => { upload.endpoint = '' }, /endpoint/i)
+        assert.throws(() => {
+            upload.endpoint = '' 
+        }, /endpoint/i)
     })
 
     it('blockSize', function() {
@@ -111,7 +113,7 @@ describe('StreamUpload', function() {
         assert.ok(StreamUpload.maxBlockSize)
 
         // Initialize object
-        let upload = new StreamUpload(null, '/' + containerName + '/test.jpg', {
+        const upload = new StreamUpload(null, '/' + containerName + '/test.jpg', {
             storageAccountName: storageAccount.name,
             storageAccountKey: storageAccount.key
         })
@@ -124,10 +126,18 @@ describe('StreamUpload', function() {
         assert.equal(upload.blockSize, 10)
 
         // Errors
-        assert.throws(() => { upload.blockSize = 0 }, /block size/i)
-        assert.throws(() => { upload.blockSize = -10 }, /block size/i)
-        assert.throws(() => { upload.blockSize = StreamUpload.maxBlockSize + 1 }, /block size/i)
-        assert.throws(() => { upload.blockSize = 'c' }, /block size/i)
+        assert.throws(() => {
+            upload.blockSize = 0 
+        }, /block size/i)
+        assert.throws(() => {
+            upload.blockSize = -10 
+        }, /block size/i)
+        assert.throws(() => {
+            upload.blockSize = StreamUpload.maxBlockSize + 1 
+        }, /block size/i)
+        assert.throws(() => {
+            upload.blockSize = 'c' 
+        }, /block size/i)
     })
 
     it('blocksPerBlob', function() {
@@ -135,7 +145,7 @@ describe('StreamUpload', function() {
         assert.ok(StreamUpload.maxBlocksPerBlob)
 
         // Initialize object
-        let upload = new StreamUpload(null, '/' + containerName + '/test.jpg', {
+        const upload = new StreamUpload(null, '/' + containerName + '/test.jpg', {
             storageAccountName: storageAccount.name,
             storageAccountKey: storageAccount.key
         })
@@ -148,10 +158,18 @@ describe('StreamUpload', function() {
         assert.equal(upload.blocksPerBlob, 10)
 
         // Errors
-        assert.throws(() => { upload.blocksPerBlob = 0 }, /blocks per blob/i)
-        assert.throws(() => { upload.blocksPerBlob = -10 }, /blocks per blob/i)
-        assert.throws(() => { upload.blocksPerBlob = StreamUpload.maxBlocksPerBlob + 1 }, /blocks per blob/i)
-        assert.throws(() => { upload.blocksPerBlob = 'c' }, /blocks per blob/i)
+        assert.throws(() => {
+            upload.blocksPerBlob = 0 
+        }, /blocks per blob/i)
+        assert.throws(() => {
+            upload.blocksPerBlob = -10 
+        }, /blocks per blob/i)
+        assert.throws(() => {
+            upload.blocksPerBlob = StreamUpload.maxBlocksPerBlob + 1 
+        }, /blocks per blob/i)
+        assert.throws(() => {
+            upload.blocksPerBlob = 'c' 
+        }, /blocks per blob/i)
     })
 
     it('concurrency', function() {
@@ -159,7 +177,7 @@ describe('StreamUpload', function() {
         assert.ok(StreamUpload.defaultConcurrency)
 
         // Initialize object
-        let upload = new StreamUpload(null, '/' + containerName + '/test.jpg', {
+        const upload = new StreamUpload(null, '/' + containerName + '/test.jpg', {
             storageAccountName: storageAccount.name,
             storageAccountKey: storageAccount.key
         })
@@ -172,8 +190,14 @@ describe('StreamUpload', function() {
         assert.equal(upload.concurrency, 10)
 
         // Errors
-        assert.throws(() => { upload.concurrency = 0 }, /concurrency/i)
-        assert.throws(() => { upload.concurrency = -10 }, /concurrency/i)
-        assert.throws(() => { upload.concurrency = 'c' }, /concurrency/i)
+        assert.throws(() => {
+            upload.concurrency = 0 
+        }, /concurrency/i)
+        assert.throws(() => {
+            upload.concurrency = -10 
+        }, /concurrency/i)
+        assert.throws(() => {
+            upload.concurrency = 'c' 
+        }, /concurrency/i)
     })
 })

@@ -13,7 +13,8 @@ module.exports = {
      * AZURE_STORAGE_ACCESS_KEY
      */
     RequireAuth() {
-        if(!process.env.AZURE_STORAGE_ACCOUNT || !process.env.AZURE_STORAGE_ACCESS_KEY) {
+        if (!process.env.AZURE_STORAGE_ACCOUNT || !process.env.AZURE_STORAGE_ACCESS_KEY) {
+            // eslint-disable-next-line no-console
             console.log('The test suite requires access to an Azure Storage Account. Please ensure that the following environmental variables are set: AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_ACCESS_KEY.')
             this.skip()
         }
@@ -42,7 +43,7 @@ module.exports = {
 
             // Create a new container
             blobService.createContainer(containerName, {publicAccessLevel: 'blob'}, (err) => {
-                if(err) {
+                if (err) {
                     throw err
                 }
 
@@ -61,12 +62,12 @@ module.exports = {
             const blobService = azure.createBlobService(storageAccount.name, storageAccount.key)
             
             // Generate a new SAS token
-            let startDate = new Date()
-            let expiryDate = new Date()
+            const startDate = new Date()
+            const expiryDate = new Date()
             startDate.setTime(startDate.getTime() - 1000)
             expiryDate.setTime(expiryDate.getTime() + 3600*1000)
 
-            let sharedAccessPolicy = {
+            const sharedAccessPolicy = {
                 AccessPolicy: {
                     Services: azure.Constants.AccountSasConstants.Services.BLOB,
                     Permissions: azure.Constants.AccountSasConstants.Permissions.WRITE + 
@@ -92,7 +93,7 @@ module.exports = {
 
             // Delete the container and all its contents
             blobService.deleteContainer(containerName, (err) => {
-                if(err) {
+                if (err) {
                     throw err
                 }
 

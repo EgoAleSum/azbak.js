@@ -9,14 +9,14 @@ const TestUtils = require('./_TestUtils')
 const Authorization = require('../lib/Authorization')
 
 describe('Authorization', function() {
-    let storageAccount = {
+    const storageAccount = {
         name: null,
         key: null,
         sasToken: null
     }
 
     // Container name where data is stored
-    let containerName = 'test-' + parseInt(Date.now() / 1000, 10)
+    const containerName = 'test-' + parseInt(Date.now() / 1000, 10)
 
     before('ensure credentials are passed', TestUtils.RequireAuth)
     before('get credentials', TestUtils.GetCredentials(storageAccount))
@@ -44,7 +44,7 @@ describe('Authorization', function() {
     })
 
     it('setStorageAccount', function() {
-        let auth = new Authorization('GET', '/blob/name')
+        const auth = new Authorization('GET', '/blob/name')
         
         auth.setStorageAccount('accountname', 'AccountKey')
         auth.setStorageAccount('accountname', null, 'SASToken')
