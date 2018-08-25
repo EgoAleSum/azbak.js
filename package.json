@@ -1,6 +1,6 @@
 {
   "name": "azbak",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Command-line utility and Node.js module to backup a file or a stream to Azure Blob Storage.",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "azure-storage": "^2.10.1",
-    "eslint": "^5.3.0",
+    "eslint": "^5.4.0",
     "jsdoc": "^3.5.5",
     "mocha": "^5.2.0"
   }
