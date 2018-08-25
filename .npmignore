@@ -1,5 +1,7 @@
 test
+test.*
 docs
 .eslintrc.yml
 .jsdoc.json
+.vscode
 Dockerfile
