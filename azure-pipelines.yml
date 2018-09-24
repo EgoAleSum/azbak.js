@@ -16,5 +16,9 @@ steps:
   displayName: 'Install pkg globally'
 
 - script: |
-    mkdir dist && pkg --out-path dist .
-  displayName: 'Build binary for Linux'
+    mkdir dist && pkg --targets node8-linux-x64,node8-linux-armv6,node8-linux-armv7,node8-macos-x64,node8-win-x64 --out-path dist .
+  displayName: 'Build binaries with pkg for Linux (x64, ARMv6 and ARMv7), macOS and Windows'
+
+- script: |
+    ls -al dist
+  displayName: 'Verify output in dist folder'
