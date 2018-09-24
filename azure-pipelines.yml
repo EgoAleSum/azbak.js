@@ -16,7 +16,7 @@ steps:
   displayName: 'Install pkg globally'
 
 - script: |
-    'mkdir dist/ && pkg --targets node8-linux-x64,node8-macos-x64,node8-win-x64 --out-path dist/ .'
+    'mkdir dist && pkg --targets node8-linux-x64,node8-macos-x64,node8-win-x64 --out-path dist .'
   displayName: 'Build binaries with pkg for Linux, macOS and Windows'
 
 - task: CopyFiles@2
