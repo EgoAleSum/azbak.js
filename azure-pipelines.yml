@@ -1,0 +1,47 @@
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+steps:
+
+# Build single-file binaries with pkg
+- task: NodeTool@0
+  inputs:
+    versionSpec: '8.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install --production
+  displayName: 'Run npm install in the project'
+
+- script: |
+    npm install -g pkg
+  displayName: 'Install pkg globally'
+
+- script: |
+    pkg --targets node8-linux-x64,node8-macos-x64,node8-win-x64 --out-path $(Build.ArtifactStagingDirectory) .
+  displayName: 'Build binaries with pkg for Linux, macOS and Windows'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish build artifacts'
+
+# Build Docker container
+- task: Docker@0
+  displayName: 'Build Docker image'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryConnection: 'italypaleale Docker'
+    imageName: 'italypaleale/azbak:$(Build.BuildId)'
+    qualifyImageName: false
+    includeSourceTags: true
+    includeLatestTag: true
+
+- task: Docker@0
+  displayName: 'Push Docker image'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryConnection: 'italypaleale Docker'
+    action: 'Push an image'
+    imageName: 'italypaleale/azbak:$(Build.BuildId)'
+    qualifyImageName: false
+    includeSourceTags: true
+    includeLatestTag: true
