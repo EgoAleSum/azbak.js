@@ -16,11 +16,7 @@ steps:
   displayName: 'Install pkg globally'
 
 - script: |
-    'mkdir -p $(Build.ArtifactStagingDirectory)'
-  displayName: 'Ensure artifacts staging directory exists'
-
-- script: |
-    'pkg --targets node8-linux-x64,node8-macos-x64,node8-win-x64 --out-path $(Build.ArtifactStagingDirectory)/ .'
+    'pkg --targets node8-linux-x64,node8-macos-x64,node8-win-x64 --out-path $(Build.ArtifactStagingDirectory)/dist/ .'
   displayName: 'Build binaries with pkg for Linux, macOS and Windows'
 
 - task: PublishBuildArtifacts@1
