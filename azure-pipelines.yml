@@ -4,21 +4,9 @@ trigger:
 pool:
   vmImage: 'Ubuntu-16.04'
 
-strategy:
-  matrix:
-    node_8_x:
-      node_version: 8.x
-    node_10_x:
-      node_version: 10.x
-    node_11_x:
-      node_version: 11.x
-    node_12_x:
-      node_version: 12.x
-
 stages:
 
   # First stage: set up the environment: install Node.js and the dependencies
-  # This runs for each version of Node.js
   - stage: setup
     displayName: Setup environment
     jobs:
@@ -27,7 +15,7 @@ stages:
           # Install Node.js
           - task: NodeTool@0
             inputs:
-              versionSpec: $(node_version)
+              versionSpec: 10.16.x
             displayName: 'Install Node.js'
           # Install dependencies
           - script: |
@@ -35,7 +23,6 @@ stages:
             displayName: 'Install dependencies'
   
   # Run tests
-  # This too runs for each version of Node.js
   - stage: tests
     displayName: Run tests
     dependsOn: [setup]
