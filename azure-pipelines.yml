@@ -1,35 +1,36 @@
-trigger:
-  - master
-
-pool:
-  vmImage: 'Ubuntu-16.04'
-
 stages:
 
-  # First stage: set up the environment: install Node.js and the dependencies
-  - stage: setup
-    displayName: Setup environment
+  # First stage: set up the environment (install Node.js and the dependencies), and run tests)
+  # This runs for each supported version of Node.js
+  - stage: test
+    displayName: Run tests
     jobs:
-      - job: setup
+      - job: test
+        pool:
+          vmImage: 'Ubuntu-16.04'
+        strategy:
+          # Versions of Node.js to test
+          matrix:
+            node_8_x:
+              node_version: 8.x
+            node_10_x:
+              node_version: 10.x
+            node_11_x:
+              node_version: 11.x
+            node_12_x:
+              node_version: 12.x
         steps:
           # Install Node.js
           - task: NodeTool@0
             inputs:
-              versionSpec: 10.16.x
+              versionSpec: $(node_version)
             displayName: 'Install Node.js'
+          
           # Install dependencies
           - script: |
               npm install
             displayName: 'Install dependencies'
-  
-  # Run tests
-  - stage: tests
-    displayName: Run tests
-    dependsOn: [setup]
-    condition: succeeded('setup')
-    jobs:
-      - job: tests
-        steps:
+          
           # Run tests
           - script: |
               npm run test-ci
@@ -48,3 +49,9 @@ stages:
               codeCoverageTool: Cobertura
               summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
               reportDirectory: '$(System.DefaultWorkingDirectory)/coverage'  
+  
+  # Build single-file binaries using pkg
+  - stage: package
+    displayName: Build single-file binaries
+    dependsOn: [test]
+    condition: succeeded('test')
