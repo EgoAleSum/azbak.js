@@ -1,3 +1,11 @@
+variables:
+  # Container registry service connection
+  dockerRegistryServiceConnection: 'a041da97-3f29-4781-a417-751b98eb7903'
+  imageRepository: 'italypaleale/azbak'
+  containerRegistry: 'hub.docker.com'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  tag: '$(Build.BuildId)'
+
 stages:
 
   # First stage: set up the environment (install Node.js and the dependencies), and run tests)
@@ -84,3 +92,25 @@ stages:
           # Publish binaries as artifacts
           - task: PublishBuildArtifacts@1
             displayName: 'Publish build artifacts'
+
+  # Build single-file binaries using pkg
+  - stage: docker
+    displayName: Build Docker container image
+    dependsOn: [test]
+    condition: succeeded('test')
+    jobs:
+      - job: docker
+        displayName: Build Docker container image
+        pool:
+          vmImage: 'Ubuntu-16.04'
+        steps:
+          - task: Docker@2
+            displayName: Build and push Docker image to Docker Hub
+            inputs:
+              command: buildAndPush
+              repository: $(imageRepository)
+              dockerfile: $(dockerfilePath)
+              containerRegistry: $(dockerRegistryServiceConnection)
+              tags: |
+                latest
+                $(tag)
