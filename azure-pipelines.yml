@@ -55,3 +55,32 @@ stages:
     displayName: Build single-file binaries
     dependsOn: [test]
     condition: succeeded('test')
+    jobs:
+      - job: package
+        pool:
+          vmImage: 'Ubuntu-16.04'
+        steps:
+          # Install Node.js 10
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '10.x'
+            displayName: 'Install Node.js'
+
+          # Install dependencies
+          - script: |
+              npm install --production
+            displayName: 'Run npm install in the project'
+
+          # Install the pkg utility globally
+          - script: |
+              npm install -g pkg@4
+            displayName: 'Install pkg globally'
+
+          # Build binaries for Linux, macOS and Windows
+          - script: |
+              pkg --targets node10-linux-x64,node10-macos-x64,node10-win-x64 --out-path $(Build.ArtifactStagingDirectory) .
+            displayName: 'Build binaries with pkg for Linux, macOS and Windows'
+
+          # Publish binaries as artifacts
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish build artifacts'
