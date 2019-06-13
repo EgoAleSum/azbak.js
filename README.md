@@ -20,8 +20,7 @@ azbak requires Node.js 8 or higher and npm.
 You can install the application from npm:
 
 ````sh
-# Depending on your system, you may need to run this as root or add "sudo"
-$ npm install --global azbak
+npm install --global azbak
 ````
 
 ## Usage
