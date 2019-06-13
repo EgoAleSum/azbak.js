@@ -4,9 +4,11 @@
   "description": "Command-line utility and Node.js module to backup a file or a stream to Azure Blob Storage.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha",
-    "lint": "./node_modules/eslint/bin/eslint.js lib test",
-    "docs": "./node_modules/jsdoc/jsdoc.js -c .jsdoc.json"
+    "test": "./node_modules/.bin/nyc ./node_modules/.bin/_mocha",
+    "test-nocov": "./node_modules/.bin/_mocha",
+    "test-ci": "./node_modules/.bin/nyc --reporter cobertura --reporter html ./node_modules/.bin/_mocha --reporter mocha-junit-reporter",
+    "lint": "./node_modules/.bin/eslint lib test",
+    "docs": "./node_modules/.bin/jsdoc -c .jsdoc.json"
   },
   "author": "Alessandro Segala",
   "license": "MIT",
@@ -19,19 +21,29 @@
     "url": "https://github.com/ItalyPaleAle/azbak.js.git"
   },
   "dependencies": {
-    "commander": "^2.17.1",
-    "lodash": "^4.17.10",
-    "qs": "^6.5.2",
-    "requestretry": "^2.0.2",
+    "commander": "^2.20.0",
+    "lodash": "^4.17.11",
+    "qs": "^6.7.0",
+    "requestretry": "^4.0.0",
     "request": "^2.88.0",
     "stream-chunkify": "^1.0.0",
-    "through2": "^2.0.3",
+    "through2": "^3.0.1",
     "through2-concurrent": "^2.0.0"
   },
   "devDependencies": {
-    "azure-storage": "^2.10.1",
-    "eslint": "^5.4.0",
-    "jsdoc": "^3.5.5",
-    "mocha": "^5.2.0"
+    "azure-storage": "^2.10.3",
+    "coveralls": "^3.0.4",
+    "eslint": "^5.16.0",
+    "jsdoc": "^3.6.2",
+    "mocha": "^6.1.4",
+    "mocha-junit-reporter": "^1.23.0",
+    "nyc": "^14.1.1"
+  },
+  "nyc": {
+    "reporter": [
+      "html",
+      "lcov"
+    ],
+    "instrument": true
   }
 }
