@@ -5,3 +5,10 @@ docs
 .jsdoc.json
 .vscode
 Dockerfile
+test-results.xml
+coverage
+.nyc_output
+.DS_Store
+azure-pipelines.yml
+
+azbak-*.tgz
