@@ -17,7 +17,7 @@ describe('StreamUpload', function() {
     }
 
     // Container name where data is stored
-    const containerName = 'test-' + parseInt(Date.now() / 1000, 10)
+    const containerName = 'test-' + parseInt(Date.now() / 1000, 5) + '-' + parseInt(Math.random() * 100)
 
     before('ensure credentials are passed', TestUtils.RequireAuth)
     before('get credentials', TestUtils.GetCredentials(storageAccount))
