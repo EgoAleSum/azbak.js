@@ -1,5 +1,5 @@
-# Using Node.js 8 LTS
-FROM node:8-alpine
+# Using Node.js 10 LTS
+FROM node:10-alpine
 
 # Set workdir
 WORKDIR /usr/src/app

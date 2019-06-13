@@ -1,12 +1,15 @@
+trigger:
+  - master
+
 pool:
-  vmImage: 'Ubuntu 16.04'
+  vmImage: 'Ubuntu-16.04'
 
 steps:
 
 # Build single-file binaries with pkg
 - task: NodeTool@0
   inputs:
-    versionSpec: '8.x'
+    versionSpec: '10.x'
   displayName: 'Install Node.js'
 
 - script: |
@@ -18,7 +21,7 @@ steps:
   displayName: 'Install pkg globally'
 
 - script: |
-    pkg --targets node8-linux-x64,node8-macos-x64,node8-win-x64 --out-path $(Build.ArtifactStagingDirectory) .
+    pkg --targets node10-linux-x64,node10-macos-x64,node10-win-x64 --out-path $(Build.ArtifactStagingDirectory) .
   displayName: 'Build binaries with pkg for Linux, macOS and Windows'
 
 - task: PublishBuildArtifacts@1
