@@ -9,6 +9,7 @@ test-results.xml
 coverage
 .nyc_output
 .DS_Store
+.nojekyll
 azure-pipelines.yml
 
 azbak-*.tgz

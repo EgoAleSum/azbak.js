@@ -11,6 +11,8 @@ Features:
 - Cross-platform
 - Small memory footprint
 
+[Full documentation](https://italypaleale.github.io/azbak.js) on GitHub Pages.
+
 # Command-line tool
 
 ## Installation
