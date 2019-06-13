@@ -15,9 +15,9 @@ Features:
 
 ## Installation
 
-azbak requires Node.js version 4.0 or higher and NPM.
+azbak requires Node.js 8 or higher and npm.
 
-You can install the application from NPM:
+You can install the application from npm:
 
 ````sh
 # Depending on your system, you may need to run this as root or add "sudo"
@@ -108,9 +108,9 @@ cat largefile.dat | gzip | azbak - /bak/largefile.dat.gz
 
 ## Installation
 
-azbak requires Node.js version 4.0 or higher and NPM.
+azbak requires Node.js version 8.0 or higher and npm.
 
-You can install the package from NPM:
+You can install the package from npm:
 
 ````sh
 npm install --save azbak
