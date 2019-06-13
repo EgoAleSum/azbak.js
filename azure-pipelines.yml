@@ -4,47 +4,60 @@ trigger:
 pool:
   vmImage: 'Ubuntu-16.04'
 
-steps:
+strategy:
+  matrix:
+    node_8_x:
+      node_version: 8.x
+    node_10_x:
+      node_version: 10.x
+    node_11_x:
+      node_version: 11.x
+    node_12_x:
+      node_version: 12.x
 
-# Build single-file binaries with pkg
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+stages:
 
-- script: |
-    npm install --production
-  displayName: 'Run npm install in the project'
-
-- script: |
-    npm install -g pkg
-  displayName: 'Install pkg globally'
-
-- script: |
-    pkg --targets node10-linux-x64,node10-macos-x64,node10-win-x64 --out-path $(Build.ArtifactStagingDirectory) .
-  displayName: 'Build binaries with pkg for Linux, macOS and Windows'
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish build artifacts'
-
-# Build Docker container
-- task: Docker@0
-  displayName: 'Build Docker image'
-  inputs:
-    containerregistrytype: 'Container Registry'
-    dockerRegistryConnection: 'italypaleale Docker'
-    imageName: 'italypaleale/azbak:$(Build.BuildId)'
-    qualifyImageName: false
-    includeSourceTags: true
-    includeLatestTag: true
-
-- task: Docker@0
-  displayName: 'Push Docker image'
-  inputs:
-    containerregistrytype: 'Container Registry'
-    dockerRegistryConnection: 'italypaleale Docker'
-    action: 'Push an image'
-    imageName: 'italypaleale/azbak:$(Build.BuildId)'
-    qualifyImageName: false
-    includeSourceTags: true
-    includeLatestTag: true
+  # First stage: set up the environment: install Node.js and the dependencies
+  # This runs for each version of Node.js
+  - stage: setup
+    displayName: Setup environment
+    jobs:
+      - job: setup
+        steps:
+          # Install Node.js
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(node_version)
+            displayName: 'Install Node.js'
+          # Install dependencies
+          - script: |
+              npm install
+            displayName: 'Install dependencies'
+  
+  # Run tests
+  # This too runs for each version of Node.js
+  - stage: tests
+    displayName: Run tests
+    dependsOn: [setup]
+    condition: succeeded('setup')
+    jobs:
+      - job: tests
+        steps:
+          # Run tests
+          - script: |
+              npm run test-ci
+            displayName: 'Run tests'
+          
+          # Publish results
+          - task: PublishTestResults@2
+            condition: succeededOrFailed()
+            inputs:
+              testRunner: JUnit
+              testResultsFiles: '$(System.DefaultWorkingDirectory)/test-results.xml'
+          
+          # Publish coverage
+          - task: PublishCodeCoverageResults@1
+            inputs: 
+              codeCoverageTool: Cobertura
+              summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
+              reportDirectory: '$(System.DefaultWorkingDirectory)/coverage'  
