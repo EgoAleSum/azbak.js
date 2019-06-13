@@ -41,6 +41,8 @@ stages:
           
           # Run tests
           - script: |
+              export AZURE_STORAGE_ACCOUNT=$(AZURE_STORAGE_ACCOUNT) 
+              export AZURE_STORAGE_ACCESS_KEY=$(AZURE_STORAGE_ACCESS_KEY) 
               npm run test-ci
             displayName: 'Run tests'
           
