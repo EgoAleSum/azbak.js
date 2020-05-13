@@ -1,3 +1,7 @@
+# !DEPRECATION NOTICE!
+
+> Thanks to the availability of [azcopy 10](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10), which is cross-platform and supports UNIX streams, this repo is no longer needed and it's now deprecated.
+
 # azbak
 
 Command-line utility and Node.js module to backup a file or a stream to Azure Blob Storage.
